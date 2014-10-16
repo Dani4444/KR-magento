@@ -1,0 +1,273 @@
+<?xml version="1.0"?>
+<config>
+	<modules>
+		<Sisow>
+<!-- declare module's version information for database updates -->
+			<version>3.2.2</version>
+		</Sisow>
+	</modules>
+	<global>
+<!-- IMPORTANT: if you use your own namespace (i.e. CompanyName) you also have to declare blocks group for new module. See topic: http://www.magentocommerce.com/boards/viewthread/22416/#t102732 -->
+	<blocks>
+		<adminhtml>
+			<rewrite>
+				<sales_order_view>Sisow_Block_OrderView</sales_order_view>
+			</rewrite>
+		</adminhtml>
+		<sisow>
+			<class>Sisow_Block</class>
+		</sisow>
+	</blocks>
+<!-- declare model group for new module -->
+		<models>
+			<sisow>
+<!-- base class name for the model group -->
+				<class>Sisow_Model</class>
+			</sisow>
+			<sisow_base>
+				<class>Sisow_Model_Base</class>
+			</sisow_base>
+		</models>
+		<helpers>
+			<sisow>
+				<class>Sisow_Helper</class>
+			</sisow>  
+		</helpers>
+<!-- declare resource setup for new module -->
+		<resources>
+<!-- resource identifier -->
+			<sisow_setup>
+<!-- specify that this resource is a setup resource and used for upgrades -->
+				<setup>
+<!-- which module to look for install/upgrade files in -->
+					<module>Sisow</module>
+				</setup>
+<!-- specify database connection for this resource -->
+				<connection>
+<!-- do not create new connection, use predefined core setup connection -->
+					<use>core_setup</use>
+				</connection>
+			</sisow_setup>
+			<sisow_write>
+				<connection>
+					<use>core_write</use>
+				</connection>
+			</sisow_write>
+			<sisow_read>
+				<connection>
+					<use>core_read</use>
+				</connection>
+			</sisow_read>
+		</resources>
+
+	</global>
+
+	<admin>
+		<routers>
+            <adminhtml>
+                <args>
+					<modules>
+						<Sisow before="Mage_Adminhtml">Sisow</Sisow>
+					</modules>
+                </args>
+            </adminhtml>
+		</routers>
+	</admin>
+	
+	<frontend>
+		<secure_url>
+			<sisow>/sisow</sisow>
+		</secure_url>
+		<routers>
+			<sisow>
+				<use>standard</use>
+				<args>
+					<module>Sisow</module>
+					<frontName>sisow</frontName>
+				</args>
+			</sisow>
+		</routers>
+		<translate>
+			<modules>
+				<Sisow>
+					<files>
+						<default>Sisow.csv</default>
+					</files>
+				</Sisow>
+			</modules>
+		</translate>
+		<events>
+			<sales_model_service_quote_submit_after>
+				<observers>
+					<sisow_observer>
+						<type>singleton</type>
+						<class>sisow/observer_submit</class>
+						<method>sales_model_service_quote_submit_after</method>
+					</sisow_observer>
+				</observers>
+			</sales_model_service_quote_submit_after>
+			<!--<sales_order_invoice_register>
+				<observers>
+					<sisow_observer>
+						<type>singleton</type>
+						<class>sisow/observer_submit</class>
+						<method>sales_order_invoice_register</method>
+					</sisow_observer>
+				</observers>
+			</sales_order_invoice_register>
+			<sales_order_invoice_save_after>
+				<observers>
+					<sisow_observer>
+						<type>singleton</type>
+						<class>sisow/observer_submit</class>
+						<method>sales_order_invoice_register</method>
+					</sisow_observer>
+				</observers>
+			</sales_order_invoice_save_after>
+			<sales_order_invoice_cancel>
+				<observers>
+					<sisow_observer>
+						<type>singleton</type>
+						<class>sisow/observer_submit</class>
+						<method>sales_order_invoice_cancel</method>
+					</sisow_observer>
+				</observers>
+			</sales_order_invoice_cancel>-->
+		</events>
+	</frontend>
+<!-- declare default configuration values for this module -->
+	<default>
+<!-- 'payment' configuration section (tab) -->
+		<payment>
+<!-- 'newmodule' configuration group (fieldset) -->
+			<sisow>
+<!-- by default this payment method is inactive -->
+				<active>0</active>
+				<title>Sisow iDEAL</title>
+				<issuerchoice>Kies uw bank</issuerchoice>
+				<payoff>Veilig online betalen met iDEAL</payoff>
+				<prefix>Magento order</prefix>
+				<redirect>U wordt omgeleid naar de bank van uw keuze</redirect>
+				<model>sisow/PaymentMethod</model>
+				<allowspecific>0</allowspecific>
+				<specificcountry></specificcountry>
+				<gebruiker></gebruiker>
+				<wachtwoord></wachtwoord>
+				<keepcart>1</keepcart>
+				<auto_invoice></auto_invoice>
+				<order_status_success>processing</order_status_success>
+				<order_status_cancelled>canceled</order_status_cancelled>
+				<order_status_expired>canceled</order_status_expired>
+				<order_status_failure>canceled</order_status_failure>
+				<return_on_failure>cart</return_on_failure>
+				<test_mode>0</test_mode>
+				<sort_order>10</sort_order>
+			</sisow>
+			<sisowecare>
+<!-- by default this payment method is inactive -->
+				<active>0</active>
+				<title>Betaal achteraf, op rekening, met Sisow ecare (verwerking kan tot 30 seconden duren)</title>
+				<prefix>Magento order</prefix>
+				<model>sisow/SisowEcare</model>
+				<allowspecific>0</allowspecific>
+				<specificcountry></specificcountry>
+				<order_status_success>pending_payment</order_status_success>
+				<order_status_cancelled>canceled</order_status_cancelled>
+				<order_status_expired>canceled</order_status_expired>
+				<keepcart>1</keepcart>
+				<test_mode>0</test_mode>
+				<sort_order>20</sort_order>
+			</sisowecare>
+			<sisowob>
+<!-- by default this payment method is inactive -->
+				<active>0</active>
+				<title>Sisow OverBoeking</title>
+				<prefix>Magento order</prefix>
+				<model>sisow/Overboeking</model>
+				<allowspecific>0</allowspecific>
+				<specificcountry></specificcountry>
+				<keepcart>1</keepcart>
+				<payment_link>1</payment_link>
+				<test_mode>0</test_mode>
+				<sort_order>20</sort_order>
+			</sisowob>
+			<sisowde>
+<!-- by default this payment method is inactive -->
+				<active>0</active>
+				<title>Sisow SofortBanking</title>
+				<prefix>Magento order</prefix>
+				<model>sisow/Sofort</model>
+				<allowspecific>0</allowspecific>
+				<specificcountry></specificcountry>
+				<keepcart>1</keepcart>
+				<test_mode>0</test_mode>
+				<sort_order>30</sort_order>
+			</sisowde>
+			<sisowmc>
+<!-- by default this payment method is inactive -->
+				<active>0</active>
+				<title>Sisow MisterCash</title>
+				<model>sisow/MisterCash</model>
+				<allowspecific>0</allowspecific>
+				<specificcountry></specificcountry>
+				<keepcart>1</keepcart>
+				<test_mode>0</test_mode>
+				<sort_order>40</sort_order>
+			</sisowmc>
+			<sisowfc>
+<!-- by default this payment method is inactive -->
+				<active>0</active>
+				<title>Sisow Fijncadeau</title>
+				<model>sisow/FijnCadeau</model>
+				<allowspecific>0</allowspecific>
+				<specificcountry></specificcountry>
+				<keepcart>1</keepcart>
+				<test_mode>0</test_mode>
+				<sort_order>50</sort_order>
+			</sisowfc>
+			<sisowwg>
+<!-- by default this payment method is inactive -->
+				<active>0</active>
+				<title>Sisow Webshop Giftcard</title>
+				<model>sisow/WebShopGiftCard</model>
+				<allowspecific>0</allowspecific>
+				<specificcountry></specificcountry>
+				<keepcart>1</keepcart>
+				<test_mode>0</test_mode>
+				<sort_order>60</sort_order>
+			</sisowwg>
+			<sisowpc>
+<!-- by default this payment method is inactive -->
+				<active>0</active>
+				<title>Sisow Podium Cadeaukaart</title>
+				<model>sisow/PodiumCadeau</model>
+				<allowspecific>0</allowspecific>
+				<specificcountry></specificcountry>
+				<keepcart>1</keepcart>
+				<test_mode>0</test_mode>
+				<sort_order>70</sort_order>
+			</sisowpc>
+			<sisowpp>
+<!-- by default this payment method is inactive -->
+				<active>0</active>
+				<title>Sisow PayPal</title>
+				<model>sisow/Paypal</model>
+				<allowspecific>0</allowspecific>
+				<specificcountry></specificcountry>
+				<keepcart>1</keepcart>
+				<test_mode>0</test_mode>
+				<sort_order>80</sort_order>
+			</sisowpp>
+			<!--<sisowppcc>
+				<active>0</active>
+				<title>Sisow PayPal Creditcard</title>
+				<model>sisow/PaypalCC</model>
+				<allowspecific>0</allowspecific>
+				<specificcountry></specificcountry>
+				<keepcart>1</keepcart>
+				<test_mode>0</test_mode>
+				<sort_order>90</sort_order>
+			</sisowppcc>-->
+		</payment>
+	</default>
+</config>
